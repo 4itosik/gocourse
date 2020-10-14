@@ -1,13 +1,7 @@
 package fib
 
-import "errors"
-
 // Calc - culate fibonacci count
-func Calc(n int) (int, error) {
-	if n > 20 {
-		return -1, errors.New("Number should be more 20")
-	}
-
+func Calc(n int) int {
 	a := 0
 	b := 1
 	// Iterate until desired position in sequence.
@@ -17,5 +11,5 @@ func Calc(n int) (int, error) {
 		a = b
 		b = temp + a
 	}
-	return a, nil
+	return a
 }

@@ -6,25 +6,12 @@ import (
 )
 
 func main() {
-	result1, err := fib.Calc(25)
+	result1 := fib.Calc(3)
+	fmt.Println("Fib 3 is eq:", result1)
 
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println("Fib 3 is eq:", result1)
-	}
+	result2 := fib.Calc(7)
+	fmt.Println("Fib 7 is eq:", result2)
 
-	result2, err := fib.Calc(7)
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println("Fib 7 is eq:", result2)
-	}
-
-	result3, err := fib.Calc(15)
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println("Fib 15 is eq:", result3)
-	}
+	result3 := fib.Calc(15)
+	fmt.Println("Fib 15 is eq:", result3)
 }

@@ -8,6 +8,7 @@ import (
 )
 
 const minNumber int = 0
+const maxNumber int = 20
 
 func main() {
 	number := flag.Int("n", -1, "Fib number")
@@ -16,14 +17,13 @@ func main() {
 	if *number <= minNumber {
 		fmt.Println("Ivalid number", *number, "Number must be greater than or equal 1")
 		os.Exit(2)
+	} else if *number > maxNumber {
+		fmt.Println("Ivalid number", *number, "Number should be less 20")
+		os.Exit(2)
 	}
 
-	result, err := fib.Calc(*number)
+	result := fib.Calc(*number)
 
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Fib", *number, "is eq:", result)
+	fmt.Printf("Fib %v is eq: %v", *number, result)
 	return
 }

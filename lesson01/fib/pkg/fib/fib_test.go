@@ -6,7 +6,7 @@ import (
 
 func Test_Calc(t *testing.T) {
 	want := 13
-	got, _ := Calc(7)
+	got := Calc(7)
 
 	if want != got {
 		t.Errorf("Got = %d; want %d", got, want)
