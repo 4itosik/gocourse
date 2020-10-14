@@ -23,7 +23,6 @@ func main() {
 	}
 
 	result := fib.Calc(*number)
-
 	fmt.Printf("Fib %v is eq: %v", *number, result)
 	return
 }
