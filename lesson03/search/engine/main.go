@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"lesson03/crawler/pkg/fakespider"
+	"lesson03/crawler/pkg/spider"
 	"strings"
 )
 
@@ -15,18 +15,10 @@ type scanner interface {
 	Scan(string, int) (map[string]string, error)
 }
 
-type crawler struct{}
-
-func (c crawler) Scan(url string, depth int) (data map[string]string, err error) {
-	return fakespider.Scan(url, depth)
-}
-
 func main() {
 	const url = "https://habr.com"
-
-	var sc scanner
-	sc = crawler{}
-	data, err := sc.Scan(url, 1)
+	c := spider.New()
+	data, err := scan(c, url, 1)
 	if err != nil {
 		fmt.Printf("ошибка при сканировании сайта %s: %v\n", url, err)
 	}
@@ -63,4 +55,8 @@ func main() {
 		fmt.Print("\n")
 	}
 
+}
+
+func scan(s scanner, url string, depth int) (data map[string]string, err error) {
+	return s.Scan(url, depth)
 }
