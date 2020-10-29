@@ -18,7 +18,7 @@ type Page struct {
 
 var pages []Page
 
-// Add - добавляет документ и обновляет индекс
+// Add - добавляет документ и обновляет индекс.
 func Add(url string, title string) {
 	nextID := nextID()
 
@@ -32,18 +32,21 @@ func Add(url string, title string) {
 	for _, w := range words {
 		w = strings.ToLower(w)
 		value, _ := index[w]
-		value = append(value, nextID)
-		index[w] = value
+
+		if !contains(value, nextID) {
+			value = append(value, nextID)
+			index[w] = value
+		}
 	}
 }
 
-// IDs - возвращает ID документа по индексу
+// IDs - возвращает ID документа по индексу.
 func IDs(w string) []int {
-	ids, _ := index[w]
+	ids := index[w]
 	return ids
 }
 
-// Pages - возвращает документы по массиву ID
+// Pages - возвращает документы по массиву ID.
 func Pages(ids []int) []Page {
 	var result []Page
 
@@ -69,4 +72,13 @@ func nextID() int {
 		}
 	}
 	return maxNumber + 1
+}
+
+func contains(s []int, e int) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }

@@ -41,5 +41,4 @@ func main() {
 		pages := index.Pages(ids)
 		fmt.Printf("%+v\n", pages)
 	}
-
 }
