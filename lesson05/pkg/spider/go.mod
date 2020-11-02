@@ -1,4 +1,4 @@
-module go-core/search/crawler/pkg/spider
+module lesson05/pkg/spider
 
 go 1.15
 

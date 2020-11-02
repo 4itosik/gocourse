@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"lesson05/crawler/pkg/index"
-	"lesson05/crawler/pkg/spider"
+	"lesson05/pkg/index"
+	"lesson05/pkg/spider"
 	"strings"
 )
 

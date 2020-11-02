@@ -4,7 +4,7 @@ package index
 
 import (
 	"fmt"
-	"lesson05/crawler/pkg/bst"
+	"lesson05/pkg/bst"
 	"strings"
 )
 
