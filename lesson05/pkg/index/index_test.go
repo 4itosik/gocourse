@@ -5,7 +5,7 @@ import (
 )
 
 func TestIndex_Add(t *testing.T) {
-	i := NewIndex()
+	i := New()
 	addItem(i)
 
 	got := i.String()
@@ -16,7 +16,7 @@ func TestIndex_Add(t *testing.T) {
 }
 
 func TestIndex_IDs(t *testing.T) {
-	i := NewIndex()
+	i := New()
 	addItem(i)
 
 	got := i.IDs("1")[0]
@@ -27,7 +27,7 @@ func TestIndex_IDs(t *testing.T) {
 }
 
 func TestIndex_Pages(t *testing.T) {
-	i := NewIndex()
+	i := New()
 	addItem(i)
 
 	ids := []int{1}

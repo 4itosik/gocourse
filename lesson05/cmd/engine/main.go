@@ -14,9 +14,9 @@ func main() {
 		fmt.Printf("ошибка при сканировании сайта %s: %v\n", url, err)
 	}
 
-	i := index.NewIndex()
+	index := index.New()
 	for url, title := range data {
-		i.Add(url, title)
+		index.Add(url, title)
 	}
 
 	for {
@@ -31,10 +31,10 @@ func main() {
 			return
 		}
 
-		ids := i.IDs(w)
+		ids := index.IDs(w)
 		fmt.Printf("Found IDs: %v\n", ids)
 
-		pages := i.Pages(ids)
+		pages := index.Pages(ids)
 		fmt.Printf("%+v\n", pages)
 	}
 }

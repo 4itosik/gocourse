@@ -22,69 +22,66 @@ type Page struct {
 	title string
 }
 
-// NewIndex создаёт новую структуру с индексом и данными
-func NewIndex() *Index {
+// New - создаёт новую структуру с индексом и данными.
+func New() *Index {
 	var t bst.Tree
-	i := Index{
+	ind := Index{
 		Data:      t,
 		Service:   make(map[string][]int),
 		CurrentID: 0,
 	}
-	return &i
+	return &ind
 }
 
 // Add - добавляет документ и обновляет индекс.
-func (i *Index) Add(url string, title string) {
-	nextID := i.CurrentID + 1
-	i.CurrentID = nextID
+func (ind *Index) Add(url string, title string) {
+	nextID := ind.CurrentID + 1
+	ind.CurrentID = nextID
 
 	p := Page{id: nextID, url: url, title: title}
 	e := bst.Element{
 		Value: p,
 		ID:    nextID,
 	}
-	i.Data.Insert(&e)
+	ind.Data.Insert(&e)
 
 	words := strings.Fields(title)
 	for _, w := range words {
 		w = strings.ToLower(w)
-		value := i.Service[w]
+		value := ind.Service[w]
 
 		if !contains(value, nextID) {
 			value = append(value, nextID)
-			i.Service[w] = value
+			ind.Service[w] = value
 		}
 	}
 }
 
 // IDs - возвращает ID документа по индексу.
-func (i Index) IDs(w string) []int {
-	ids := i.Service[w]
+func (ind Index) IDs(w string) []int {
+	ids := ind.Service[w]
 	return ids
 }
 
 // Pages - возвращает документы по массиву ID.
-func (i Index) Pages(ids []int) []Page {
-	var result []Page
+func (ind Index) Pages(ids []int) []Page {
+	var r []Page
 
 	for _, id := range ids {
-		search(i, id, &result)
+		e, found := ind.Data.Search(id)
+
+		if found {
+			p := e.Value.(Page) // Это вообще методом тыка и гугла смог подобрать
+			r = append(r, p)
+		}
 	}
 
-	return result
-}
-func search(i Index, id int, r *[]Page) {
-	e, found := i.Data.Search(id)
-
-	if found {
-		p := e.Value.(Page) // Это вообще методом тыка и гугла смог подобрать
-		*r = append(*r, p)
-	}
+	return r
 }
 
-func (i Index) String() string {
+func (ind Index) String() string {
 	var ids []int
-	i.Data.IDs(&ids)
+	ind.Data.IDs(&ids)
 
 	var s string
 	for _, id := range ids {
