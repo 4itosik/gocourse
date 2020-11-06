@@ -17,3 +17,5 @@ main
 .DS_Store
 
 go.sum
+
+data.json
