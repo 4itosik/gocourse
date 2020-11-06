@@ -39,6 +39,18 @@ func TestIndex_Pages(t *testing.T) {
 	}
 }
 
+func TestIndex_Clear(t *testing.T) {
+	i := New()
+	addItem(i)
+	i.Clear()
+
+	got := i.String()
+	want := ""
+	if got != want {
+		t.Fatalf("получили %s, ожидалось %s", got, want)
+	}
+}
+
 func addItem(i *Index) {
 	i.Add("http://page1.ru", "Страница 1")
 	i.Add("http://page2.ru", "Страница 2")
