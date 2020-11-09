@@ -1,6 +1,7 @@
 package index
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -39,13 +40,20 @@ func TestIndex_Pages(t *testing.T) {
 	}
 }
 
-func TestIndex_Clear(t *testing.T) {
+func TestIndex_AllData(t *testing.T) {
 	i := New()
 	addItem(i)
-	i.Clear()
 
-	got := i.String()
-	want := ""
+	data := i.AllData()
+	var got string
+	for url := range data {
+		got += fmt.Sprintf("%s ", url)
+	}
+	if len(got) > 0 {
+		got = got[:len(got)-1]
+	}
+
+	want := "http://page1.ru http://page2.ru http://page3.ru"
 	if got != want {
 		t.Fatalf("получили %s, ожидалось %s", got, want)
 	}

@@ -13,6 +13,7 @@ type Index struct {
 	Data      bst.Tree
 	Service   map[string][]int
 	CurrentID int
+	urls      []string
 }
 
 // Page - стуруктура документа
@@ -29,12 +30,17 @@ func New() *Index {
 		Data:      t,
 		Service:   make(map[string][]int),
 		CurrentID: 0,
+		urls:      []string{},
 	}
 	return &ind
 }
 
 // Add - добавляет документ и обновляет индекс.
 func (ind *Index) Add(url string, title string) {
+	if containsURL(ind.urls, url) {
+		return
+	}
+
 	nextID := ind.CurrentID + 1
 	ind.CurrentID = nextID
 
@@ -45,12 +51,15 @@ func (ind *Index) Add(url string, title string) {
 	}
 	ind.Data.Insert(&e)
 
+	urls := append(ind.urls, url)
+	ind.urls = urls
+
 	words := strings.Fields(title)
 	for _, w := range words {
 		w = strings.ToLower(w)
 		value := ind.Service[w]
 
-		if !contains(value, nextID) {
+		if !containsID(value, nextID) {
 			value = append(value, nextID)
 			ind.Service[w] = value
 		}
@@ -79,12 +88,17 @@ func (ind *Index) Pages(ids []int) []Page {
 	return r
 }
 
-// Clear - очищает поисковые данные.
-func (ind *Index) Clear() {
-	var t bst.Tree
-	ind.Data = t
-	ind.Service = make(map[string][]int)
-	ind.CurrentID = 0
+// AllData - возвращает url-ы и title-ы всех страниц в индексе.
+func (ind *Index) AllData() map[string]string {
+	var arr []bst.Element
+	ind.Data.Elements(&arr)
+
+	r := make(map[string]string)
+	for _, el := range arr {
+		p := el.Value.(Page)
+		r[p.url] = p.title
+	}
+	return r
 }
 
 func (ind *Index) String() string {
@@ -101,7 +115,16 @@ func (ind *Index) String() string {
 	return s
 }
 
-func contains(s []int, e int) bool {
+func containsID(s []int, e int) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
+func containsURL(s []string, e string) bool {
 	for _, a := range s {
 		if a == e {
 			return true

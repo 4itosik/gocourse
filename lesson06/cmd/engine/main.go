@@ -11,14 +11,33 @@ import (
 	"strings"
 )
 
+type fileError struct {
+	s string
+}
+
+func (e *fileError) Error() string {
+	return e.s
+}
+
 const dataFile = "./data.json"
 
 func main() {
 	ind := index.New()
-	readFromFile(ind)
+	data, err := readFromFile(dataFile)
+	if err != nil {
+		if err, ok := err.(*fileError); ok {
+		} else {
+			log.Fatal(err)
+		}
+	}
+	if err == nil {
+		for url, title := range data {
+			ind.Add(url, title)
+		}
+	}
 
 	const url = "https://habr.com"
-	go crawlerSite(ind, url, 2)
+	go scanSite(ind, url, 1)
 
 	for {
 		fmt.Print("Enter word or quit for exit: ")
@@ -28,6 +47,11 @@ func main() {
 		w = strings.ToLower(w)
 
 		if w == "quit" {
+			allData := ind.AllData()
+			err := writeToFile(dataFile, allData)
+			if err != nil {
+				log.Fatal(err)
+			}
 			fmt.Println("Exit!")
 			return
 		}
@@ -40,45 +64,33 @@ func main() {
 	}
 }
 
-func readFromFile(ind *index.Index) {
-	if !fileExists(dataFile) {
-		return
+func readFromFile(filename string) (data map[string]string, err error) {
+	if !fileExists(filename) {
+		return nil, &fileError{"not found"}
 	}
 
-	byteValue, err := ioutil.ReadFile(dataFile)
+	byteValue, err := ioutil.ReadFile(filename)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	data := make(map[string]string)
+	data = make(map[string]string)
 	err = json.Unmarshal(byteValue, &data)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	for url, title := range data {
-		ind.Add(url, title)
-	}
+	return data, nil
 }
 
-func crawlerSite(ind *index.Index, url string, depth int) {
+func scanSite(ind *index.Index, url string, depth int) {
 	data, err := spider.Scan(url, depth)
 	if err != nil {
-		fmt.Printf("ошибка при сканировании сайта %s: %v\n", url, err)
+		log.Fatal(err)
 	}
 
-	ind.Clear()
 	for url, title := range data {
 		ind.Add(url, title)
-	}
-
-	bytes, err := json.Marshal(data)
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = ioutil.WriteFile(dataFile, bytes, 0644)
-	if err != nil {
-		log.Fatal(err)
 	}
 }
 
@@ -88,4 +100,16 @@ func fileExists(filename string) bool {
 		return false
 	}
 	return !info.IsDir()
+}
+
+func writeToFile(filename string, data map[string]string) error {
+	bytes, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(dataFile, bytes, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -79,3 +79,18 @@ func (el *Element) ids(s *[]int) {
 	el.left.ids(s)
 	el.right.ids(s)
 }
+
+// Elements - собирает все элементы дерева
+func (t *Tree) Elements(arr *[]Element) {
+	t.root.elements(arr)
+}
+func (el *Element) elements(arr *[]Element) {
+	if el == nil {
+		return
+	}
+
+	*arr = append(*arr, *el)
+
+	el.left.elements(arr)
+	el.right.elements(arr)
+}
