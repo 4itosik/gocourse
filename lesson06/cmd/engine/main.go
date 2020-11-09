@@ -107,7 +107,7 @@ func writeToFile(filename string, data map[string]string) error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(dataFile, bytes, 0644)
+	err = ioutil.WriteFile(filename, bytes, 0644)
 	if err != nil {
 		return err
 	}
