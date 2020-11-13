@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"lesson06/pkg/index"
@@ -11,25 +12,14 @@ import (
 	"strings"
 )
 
-type fileError struct {
-	s string
-}
-
-func (e *fileError) Error() string {
-	return e.s
-}
+var errFileNotFound = errors.New("Файл не найден")
 
 const dataFile = "./data.json"
 
 func main() {
 	ind := index.New()
 	data, err := readFromFile(dataFile)
-	if err != nil {
-		if err, ok := err.(*fileError); ok {
-		} else {
-			log.Fatal(err)
-		}
-	}
+	// пропускаем если произошла ошибка, после работы будет перезаписан новый файл
 	if err == nil {
 		for url, title := range data {
 			ind.Add(url, title)
@@ -66,16 +56,16 @@ func main() {
 
 func readFromFile(filename string) (data map[string]string, err error) {
 	if !fileExists(filename) {
-		return nil, &fileError{"not found"}
+		return nil, errFileNotFound
 	}
 
-	byteValue, err := ioutil.ReadFile(filename)
+	bytes, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
 
 	data = make(map[string]string)
-	err = json.Unmarshal(byteValue, &data)
+	err = json.Unmarshal(bytes, &data)
 	if err != nil {
 		return nil, err
 	}
