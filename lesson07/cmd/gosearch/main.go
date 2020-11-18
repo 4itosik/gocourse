@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"lesson07/pkg/crawler"
 	"lesson07/pkg/crawler/spider"
+	"lesson07/pkg/engine"
 	"lesson07/pkg/index"
 	"lesson07/pkg/index/hash"
 	"lesson07/pkg/storage"
@@ -18,6 +19,7 @@ type gosearch struct {
 	scanner crawler.Interface
 	storage storage.Interface
 	index   index.Interface
+	engine  *engine.Service
 	url     string
 	depth   int
 }
@@ -33,6 +35,7 @@ func new() *gosearch {
 	gs.scanner = spider.New()
 	gs.storage = filestore.New(dataFile)
 	gs.index = hash.New()
+	gs.engine = engine.New(gs.index)
 	gs.url = "https://go.dev"
 	gs.depth = 2
 	return &gs
@@ -64,10 +67,7 @@ func (gs *gosearch) run() {
 			return
 		}
 
-		ids := gs.index.IDs(w)
-		fmt.Printf("Found IDs: %v\n", ids)
-
-		docs := gs.index.Docs(ids)
+		docs := gs.engine.Search(w)
 		fmt.Printf("%+v\n", docs)
 	}
 }
