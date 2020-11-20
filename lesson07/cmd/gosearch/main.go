@@ -45,8 +45,12 @@ func (gs *gosearch) init() {
 	fileData, err := gs.storage.ReadData()
 	if err == nil {
 		addToIndex(gs, fileData)
+		go scanSite(gs)
 	}
-	go scanSite(gs)
+
+	if err != nil {
+		scanSite(gs)
+	}
 }
 
 func (gs *gosearch) run() {
