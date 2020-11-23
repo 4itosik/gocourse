@@ -43,14 +43,12 @@ func new() *gosearch {
 
 func (gs *gosearch) init() {
 	fileData, err := gs.storage.ReadData()
-	if err == nil {
-		addToIndex(gs, fileData)
-		go scanSite(gs)
-	}
-
 	if err != nil {
-		scanSite(gs)
+		gs.scanSite()
+		return
 	}
+	gs.addToIndex(fileData)
+	go gs.scanSite()
 }
 
 func (gs *gosearch) run() {
@@ -76,16 +74,16 @@ func (gs *gosearch) run() {
 	}
 }
 
-func addToIndex(gs *gosearch, data []crawler.Document) {
+func (gs *gosearch) addToIndex(data []crawler.Document) {
 	for _, doc := range data {
 		gs.index.Add(doc)
 	}
 }
 
-func scanSite(gs *gosearch) {
+func (gs *gosearch) scanSite() {
 	data, err := gs.scanner.Scan(gs.url, gs.depth)
 	if err != nil {
 		log.Fatal(err)
 	}
-	addToIndex(gs, data)
+	gs.addToIndex(data)
 }
