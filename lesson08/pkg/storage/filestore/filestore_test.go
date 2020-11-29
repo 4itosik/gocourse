@@ -1,6 +1,7 @@
 package filestore
 
 import (
+	"flag"
 	"fmt"
 	"lesson08/pkg/crawler"
 	"os"
@@ -20,6 +21,12 @@ var docs = []crawler.Document{
 }
 
 func TestMain(m *testing.M) {
+	flag.Parse()
+	if !testing.Short() {
+		fmt.Println("skip test. Run with -short")
+		return
+	}
+
 	_ = os.Remove(filename)
 	exitVal := m.Run()
 	_ = os.Remove(filename)
