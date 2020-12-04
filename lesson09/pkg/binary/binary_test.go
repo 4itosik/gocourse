@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func BenchmarkBinary(b *testing.B) {
+func BenchmarkBinary_Search(b *testing.B) {
 	bin := New()
 	sampleData(bin)
 	b.Run("binary search", func(b *testing.B) {

@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func BenchmarkBst(b *testing.B) {
+func BenchmarkBst_Search(b *testing.B) {
 	var tree Tree
 	sampleData(&tree)
 	b.Run("bst search", func(b *testing.B) {
