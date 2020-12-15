@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func Test_printAll(t *testing.T) {
+func Test_printStrings(t *testing.T) {
 	a := "str1"
 	i := 3
 	b := false
@@ -13,7 +13,7 @@ func Test_printAll(t *testing.T) {
 	d := "str3"
 
 	var buf bytes.Buffer
-	printAll(&buf, a, i, b, c, d)
+	printStrings(&buf, a, i, b, c, d)
 	got := buf.String()
 	want := "str1str2str3"
 	if got != want {

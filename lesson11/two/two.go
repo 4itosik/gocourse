@@ -8,16 +8,8 @@ type customer struct {
 	age int
 }
 
-func (e employee) years() int {
-	return e.age
-}
-
-func (c customer) years() int {
-	return c.age
-}
-
 func maxAgePerson(persons ...interface{}) interface{} {
-	var oldperson interface{}
+	var oldest interface{}
 	var years int
 
 	for _, p := range persons {
@@ -32,9 +24,9 @@ func maxAgePerson(persons ...interface{}) interface{} {
 
 		if age > years {
 			years = age
-			oldperson = p
+			oldest = p
 		}
 	}
 
-	return oldperson
+	return oldest
 }
