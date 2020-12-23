@@ -3,31 +3,48 @@ package main
 import (
 	"fmt"
 	"math/rand"
-	"time"
+	"sync"
 )
 
+const maxscore = 11
+
 type game struct {
-	winner string
-	ch     chan string
+	score map[string]int
+	ch    chan string
+}
+
+func (g *game) completed() bool {
+	for _, score := range g.score {
+		if score >= maxscore {
+			return true
+		}
+	}
+
+	return false
 }
 
 func main() {
 	game := game{
-		winner: "",
-		ch:     make(chan string),
+		score: make(map[string]int),
+		ch:    make(chan string),
 	}
-	done := make(chan string)
+	wg := &sync.WaitGroup{}
 
-	go play("Player 1", &game, done)
-	go play("Player 2", &game, done)
+	wg.Add(2)
+	go play("Player 1", &game, wg)
+	go play("Player 2", &game, wg)
 	game.ch <- "begin"
 
-	<-done
+	wg.Wait()
 	fmt.Println("Game finish!")
-	fmt.Printf("Won: %s\n", game.winner)
+	for player, score := range game.score {
+		fmt.Printf("%s: %d\n", player, score)
+	}
 }
 
-func play(name string, game *game, done chan<- string) {
+func play(name string, game *game, wg *sync.WaitGroup) {
+	defer wg.Done()
+
 	for {
 		response := "ping"
 		request, ok := <-game.ch
@@ -36,9 +53,8 @@ func play(name string, game *game, done chan<- string) {
 			break
 		}
 
-		if request == "stop" {
+		if game.completed() {
 			close(game.ch)
-			close(done)
 			break
 		}
 
@@ -48,11 +64,10 @@ func play(name string, game *game, done chan<- string) {
 
 		if rundWin() {
 			response = "stop"
-			game.winner = name
+			game.score[name]++
 		}
 
 		fmt.Printf("Name: %s - Step: %s\n", name, response)
-		time.Sleep(1 * time.Second)
 		game.ch <- response
 	}
 }
